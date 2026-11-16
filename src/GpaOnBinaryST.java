@@ -1,5 +1,7 @@
 import components.binarytree.BinaryTree;
 import components.binarytree.BinaryTree1;
+import components.simplereader.SimpleReader;
+import components.simplereader.SimpleReader1L;
 import components.simplewriter.SimpleWriter;
 import components.simplewriter.SimpleWriter1L;
 
@@ -41,8 +43,8 @@ public class GpaOnBinaryST {
         double n = 0;
         BinaryTree<Double> l = t.newInstance();
         BinaryTree<Double> r = t.newInstance();
-        double root = t.disassemble(l, r);
         if (t.height() > 1) {
+            double root = t.disassemble(l, r);
             if (l.height() > 0) {
                 //Looks for the leftmost node of the tree through recursive calls.
                 n = pullSmallSuccessor(l);
@@ -59,6 +61,7 @@ public class GpaOnBinaryST {
             /**
              * t is a single node.
              */
+            double root = t.disassemble(l, r);
             n = root;
         }
         return n;
@@ -76,8 +79,8 @@ public class GpaOnBinaryST {
         double n = 0;
         BinaryTree<Double> l = t.newInstance();
         BinaryTree<Double> r = t.newInstance();
-        double root = t.disassemble(l, r);
         if (t.height() > 1) {
+            double root = t.disassemble(l, r);
             if (r.height() > 0) {
                 //Looks for the rightmost node of the tree through recursive calls.
                 n = pullLargeSuccessor(r);
@@ -94,7 +97,7 @@ public class GpaOnBinaryST {
             /**
              * t is a single node.
              */
-            root = t.disassemble(l, r);
+            double root = t.disassemble(l, r);
             n = root;
         }
         return n;
@@ -229,7 +232,8 @@ public class GpaOnBinaryST {
             if (pos < currentPos) {
                 target = findElementAtPosition(l, pos);
             } else if (pos > currentPos) {
-                target = findElementAtPosition(r, l.size() + r.size() - pos);
+                target = findElementAtPosition(r,
+                        l.size() + r.size() - 1 - pos);
             } else {
                 target = root;
             }
@@ -287,21 +291,50 @@ public class GpaOnBinaryST {
         final double rlrlD = 13;
 
         SimpleWriter out = new SimpleWriter1L();
-        double[] d = { root, lD, rD, lrD, llD, rlD, lllD, rlrD, rlrlD };
+        SimpleReader in = new SimpleReader1L();
+        out.println("Type the number of elements the initial tree has: ");
+        int n = in.nextInteger();
+        double[] d = new double[n];
+        for (int i = 0; i < n; i++) {
+            out.println("Enter a double: ");
+            double x = in.nextDouble();
+            d[i] = x;
+        }
         BinaryTree<Double> gpaStore = createFromArgs(d);
         out.println(gpaStore);
-        double a = average(gpaStore);
-        double min = min(gpaStore);
-        double max = max(gpaStore);
-        double e = findElementAtPosition(gpaStore, 0);
-        remove(gpaStore, root);
-        out.println(gpaStore);
-        double mid = median(gpaStore);
-        //out.println(a);
-        //out.println(min);
-        //out.println(max);
-        //out.println(e);
-        out.println(mid);
+        Boolean run = true;
+        while (run) {
+            out.println("Type what action you'd like to perform: ");
+            out.println("Add, Remove, Average, Median, Min, Max, Stop");
+            String response = in.nextLine();
+            if (response.equals("Add")) {
+                out.println("Type a double to add to the tree");
+                double x = in.nextDouble();
+                add(gpaStore, x);
+                out.println(gpaStore);
+            } else if (response.equals("Remove")) {
+                out.println("Type a double to remove from the tree");
+                double x = in.nextDouble();
+                remove(gpaStore, x);
+                out.println(gpaStore);
+            } else if (response.equals("Average")) {
+                double x = average(gpaStore);
+                out.println(x);
+            } else if (response.equals("Median")) {
+                double x = median(gpaStore);
+                out.println(x);
+            } else if (response.equals("Min")) {
+                double x = min(gpaStore);
+                out.println(x);
+            } else if (response.equals("Max")) {
+                double x = max(gpaStore);
+                out.println(x);
+            } else if (response.equals("Stop")) {
+                run = false;
+            } else {
+                out.println("Enter a valid command");
+            }
+        }
         out.close();
 
     }
