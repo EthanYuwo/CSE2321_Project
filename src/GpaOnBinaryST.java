@@ -280,16 +280,6 @@ public class GpaOnBinaryST {
         /**
          * Binary tree to store values.
          */
-        final double root = 9;
-        final double lD = 6;
-        final double rD = 15;
-        final double llD = 4;
-        final double lrD = 8;
-        final double lllD = 3;
-        final double rlD = 12;
-        final double rlrD = 14;
-        final double rlrlD = 13;
-
         SimpleWriter out = new SimpleWriter1L();
         SimpleReader in = new SimpleReader1L();
         out.println("Type the number of elements the initial tree has: ");
@@ -335,6 +325,7 @@ public class GpaOnBinaryST {
                 out.println("Enter a valid command");
             }
         }
+        in.close();
         out.close();
 
     }
