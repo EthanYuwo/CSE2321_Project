@@ -8,7 +8,7 @@ import components.simplewriter.SimpleWriter1L;
 /**
  * GpaOnBinaryST.
  */
-public class GpaOnBinaryST {
+abstract class GpaOnBinaryST {
     /**
      * @param t
      * @param x
@@ -39,11 +39,10 @@ public class GpaOnBinaryST {
      * @return next double in order.
      */
     private static double pullSmallSuccessor(BinaryTree<Double> t) {
-        assert (t.size() > 0) : "Binary tree must be nonempty!";
         double n = 0;
         BinaryTree<Double> l = t.newInstance();
         BinaryTree<Double> r = t.newInstance();
-        if (t.height() > 1) {
+        if (t.height() > 0) {
             double root = t.disassemble(l, r);
             if (l.height() > 0) {
                 //Looks for the leftmost node of the tree through recursive calls.
@@ -57,12 +56,6 @@ public class GpaOnBinaryST {
                 n = root;
                 t.transferFrom(r);
             }
-        } else {
-            /**
-             * t is a single node.
-             */
-            double root = t.disassemble(l, r);
-            n = root;
         }
         return n;
     }
@@ -75,11 +68,10 @@ public class GpaOnBinaryST {
      * @return next double in order.
      */
     private static double pullLargeSuccessor(BinaryTree<Double> t) {
-        assert (t.size() > 0) : "Binary tree must be nonempty!";
         double n = 0;
-        BinaryTree<Double> l = t.newInstance();
-        BinaryTree<Double> r = t.newInstance();
-        if (t.height() > 1) {
+        if (t.height() > 0) {
+            BinaryTree<Double> l = t.newInstance();
+            BinaryTree<Double> r = t.newInstance();
             double root = t.disassemble(l, r);
             if (r.height() > 0) {
                 //Looks for the rightmost node of the tree through recursive calls.
@@ -93,12 +85,6 @@ public class GpaOnBinaryST {
                 n = root;
                 t.transferFrom(l);
             }
-        } else {
-            /**
-             * t is a single node.
-             */
-            double root = t.disassemble(l, r);
-            n = root;
         }
         return n;
     }
@@ -108,11 +94,14 @@ public class GpaOnBinaryST {
      * @param x
      */
     private static void remove(BinaryTree<Double> t, double x) {
-        assert (t.size() > 0) : "Binary tree must be nonempty!";
-        BinaryTree<Double> l = t.newInstance();
-        BinaryTree<Double> r = t.newInstance();
         if (t.size() > 1) {
+            BinaryTree<Double> l = t.newInstance();
+            BinaryTree<Double> r = t.newInstance();
             double root = t.disassemble(l, r);
+            /**
+             * We've identified the element to be removed and now need to find a
+             * replacement. Additionally, this element is a non-leaf node.
+             */
             if (root == x) {
                 double replace = 0;
                 if (r.height() > 0) {
@@ -121,16 +110,17 @@ public class GpaOnBinaryST {
                     replace = pullLargeSuccessor(l);
                 }
                 t.assemble(replace, l, r);
+            } else if (x > root) {
+                remove(r, x);
+                t.assemble(root, l, r);
             } else {
                 remove(l, x);
-                remove(r, x);
                 t.assemble(root, l, r);
             }
         } else if (t.size() == 1 && t.root() == x) {
             //t is a leaf node, so we simply remove it.
-            t.disassemble(l, r);
+            t.clear();
         }
-
     }
 
     /**
@@ -156,14 +146,7 @@ public class GpaOnBinaryST {
      */
     private static double average(BinaryTree<Double> t) {
         assert (t.size() > 0) : "Binary tree must be nonempty!";
-        double avg = t.root();
-        if (t.height() > 1) {
-            BinaryTree<Double> l = t.newInstance();
-            BinaryTree<Double> r = t.newInstance();
-            double root = t.disassemble(l, r);
-            avg += sum(l) + sum(r);
-            t.assemble(root, l, r);
-        }
+        double avg = sum(t);
         avg = avg / t.size();
         return avg;
     }
